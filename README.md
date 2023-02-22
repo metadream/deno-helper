@@ -96,36 +96,13 @@ export class Redis {
 Then you can use redis object as singleton instance in any controllers with
 `ctx.redis`.
 
-### 4. Engine
-
-Define one and only one engine decorator that can render templates file with
-specific data. The custom engine must inherit the base engine and override its
-methods
-
-```ts
-// my_engine.ts
-import { Engine } from "https://esm.sh/deno-cross/mod.ts";
-
-@Engine()
-export class MyEngine extends Engine {
-  // Override (required)
-  view(tmplFile, data) {
-    // return html string
-  }
-  // Override (optional)
-  render(tmplText, data) {
-    // return html string
-  }
-}
-```
-
-### 5. Template
+### 4. Template
 
 Template decorator is used to decorate controller handlers, the parameters is
-template file path. If no engine is defined, the built-in engine will be used
-for rendering automatically, The built-in engine is based on
-[tmplet.js](https://github.com/metadream/tmplet.js), You can go to the repo to
-see the template syntax.
+template file path. and the built-in engine will be used for rendering
+automatically. The built-in engine is based on
+[tmplet](https://github.com/metadream/tmplet), You can go to the repo to see the
+template syntax.
 
 ```ts
 // controller.ts
@@ -149,7 +126,7 @@ export class MyController {
 <h1>Hello, {{= name }}</h1>
 ```
 
-### 6. JSX
+### 5. JSX
 
 ```ts
 // controller.ts
@@ -172,7 +149,7 @@ export class JsxController {
 }
 ```
 
-### 7. ErrorHandlder
+### 6. ErrorHandlder
 
 If an error handler decorator is defined, all errors within the framework will
 be handled by it. Like middleware, you can define it in any class method but
@@ -212,22 +189,21 @@ same parameters.
 
 ### Decorators
 
-| name           | type            | parameters | parameter description              |
-| -------------- | --------------- | ---------- | ---------------------------------- |
-| @Controller    | ClassDecorator  | string     | Prefix for request route           |
-| @Plugin        | ClassDecorator  | string     | Plugin name with context           |
-| @Engine        | ClassDecorator  | string     | Render method name in engine class |
-| @All           | MethodDecorator | string     | Route path                         |
-| @Get           | MethodDecorator | string     | Route path                         |
-| @Post          | MethodDecorator | string     | Route path                         |
-| @Put           | MethodDecorator | string     | Route path                         |
-| @Delete        | MethodDecorator | string     | Route path                         |
-| @Patch         | MethodDecorator | string     | Route path                         |
-| @Head          | MethodDecorator | string     | Route path                         |
-| @Options       | MethodDecorator | string     | Route path                         |
-| @Template      | MethodDecorator | string     | Template file path                 |
-| @Middleware    | MethodDecorator | number     | Middleware execution priority      |
-| @ErrorHandlder | MethodDecorator | undefined  |                                    |
+| name           | type            | parameters | parameter description         |
+| -------------- | --------------- | ---------- | ----------------------------- |
+| @Controller    | ClassDecorator  | string     | Prefix for request route      |
+| @Plugin        | ClassDecorator  | string     | Plugin name with context      |
+| @All           | MethodDecorator | string     | Route path                    |
+| @Get           | MethodDecorator | string     | Route path                    |
+| @Post          | MethodDecorator | string     | Route path                    |
+| @Put           | MethodDecorator | string     | Route path                    |
+| @Delete        | MethodDecorator | string     | Route path                    |
+| @Patch         | MethodDecorator | string     | Route path                    |
+| @Head          | MethodDecorator | string     | Route path                    |
+| @Options       | MethodDecorator | string     | Route path                    |
+| @Template      | MethodDecorator | string     | Template file path            |
+| @Middleware    | MethodDecorator | number     | Middleware execution priority |
+| @ErrorHandlder | MethodDecorator | undefined  |                               |
 
 ### Context
 

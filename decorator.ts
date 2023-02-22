@@ -8,11 +8,11 @@ import { Metadata } from "./metadata.ts";
  * @returns
  */
 const Request = (method: string) => (path: string): MethodDecorator => {
-  return (target, name) => {
-    Metadata.append(target.constructor, {
-      type: "method", name: method, value: path, fn: name
-    });
-  };
+    return (target, name) => {
+        Metadata.append(target.constructor, {
+            type: "method", name: method, value: path, fn: name
+        });
+    };
 }
 
 /**
@@ -21,11 +21,11 @@ const Request = (method: string) => (path: string): MethodDecorator => {
  * @returns
  */
 export const Middleware = (priority: number): MethodDecorator => {
-  return (target, name) => {
-    Metadata.append(target.constructor, {
-      type: "method", name: "Middleware", value: priority, fn: name
-    });
-  };
+    return (target, name) => {
+        Metadata.append(target.constructor, {
+            type: "method", name: "Middleware", value: priority, fn: name
+        });
+    };
 }
 
 /**
@@ -34,11 +34,11 @@ export const Middleware = (priority: number): MethodDecorator => {
  * @returns
  */
 export const Template = (path: string): MethodDecorator => {
-  return (target, name) => {
-    Metadata.append(target.constructor, {
-      type: "method", name: "Template", value: path, fn: name
-    });
-  };
+    return (target, name) => {
+        Metadata.append(target.constructor, {
+            type: "method", name: "Template", value: path, fn: name
+        });
+    };
 }
 
 /**
@@ -46,11 +46,11 @@ export const Template = (path: string): MethodDecorator => {
  * @returns
  */
 export const ErrorHandlder = (): MethodDecorator => {
-  return (target, name) => {
-    Metadata.append(target.constructor, {
-      type: "method", name: "ErrorHandlder", fn: name
-    });
-  };
+    return (target, name) => {
+        Metadata.append(target.constructor, {
+            type: "method", name: "ErrorHandlder", fn: name
+        });
+    };
 }
 
 /**
@@ -59,11 +59,11 @@ export const ErrorHandlder = (): MethodDecorator => {
  * @returns
  */
 export const Controller = (prefix?: string): ClassDecorator => {
-  return (constructor) => {
-    Metadata.append(constructor, {
-      type: "class", name: "Controller", value: prefix
-    });
-  }
+    return (constructor) => {
+        Metadata.append(constructor, {
+            type: "class", name: "Controller", value: prefix
+        });
+    }
 }
 
 /**
@@ -72,23 +72,11 @@ export const Controller = (prefix?: string): ClassDecorator => {
  * @returns
  */
 export const Plugin = (name: string): ClassDecorator => {
-  return (constructor) => {
-    Metadata.append(constructor, {
-      type: "class", name: "Plugin", value: name
-    });
-  }
-}
-
-/**
- * Engine decorator
- * @returns
- */
-export const Engine = (): ClassDecorator => {
-  return (constructor) => {
-    Metadata.append(constructor, {
-      type: "class", name: "Engine"
-    });
-  }
+    return (constructor) => {
+        Metadata.append(constructor, {
+            type: "class", name: "Plugin", value: name
+        });
+    }
 }
 
 export const All = Request(Method.ALL);

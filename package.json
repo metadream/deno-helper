@@ -1,6 +1,6 @@
 {
   "name": "deno-cross",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A tiny and strong framework for web application based on deno and decorators.",
   "license": "MIT",
   "author": "Ai Chen",
