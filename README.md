@@ -105,6 +105,14 @@ automatically. The built-in engine is based on
 template syntax.
 
 ```ts
+// main.ts
+new Cross()
+.engine({ // Engine options, not necessary
+  root: "", // The root of template files
+  imports: {} // Global imports for template
+})
+.listen();
+
 // controller.ts
 import {
   Context,
@@ -116,7 +124,7 @@ import {
 @Controller("/prefix")
 export class MyController {
   @Get("/:user")
-  @Template("index.html")
+  @Template("index.html") // or @Template("root/path/index.html")
   getUser(ctx: Context) {
     return { name: ctx.params.user };
   }

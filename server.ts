@@ -54,6 +54,7 @@ export class Server {
     // deno-lint-ignore no-explicit-any
     engine(options: any) {
         this.#engine.init(options);
+        return this;
     }
 
     /**
