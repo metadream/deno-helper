@@ -71,7 +71,7 @@ export class Server {
             port = port || 3000;
             serve((request: Request) => this.#handleRequest(request), { port });
             console.log(`\x1b[90m[Cross] ${this.#version()}\x1b[0m`);
-            console.log(`\x1b[90m[Cross] Repository: https://github.com/metadream/es-modules\x1b[0m`);
+            console.log(`\x1b[90m[Cross] Repository: https://github.com/metadream/deno-cross\x1b[0m`);
             console.log(`[Cross] Server is running at \x1b[4m\x1b[36mhttp://localhost:${port}\x1b[0m`);
         }
         return this;
