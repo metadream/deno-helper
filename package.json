@@ -1,18 +1,20 @@
 {
-  "name": "deno-cross",
-  "version": "1.0.11",
-  "description": "A tiny and strong framework for web application based on deno and decorators.",
+  "name": "denos",
+  "version": "0.0.1",
+  "description": "A compact, high-performance and full-featured web framework based on deno.",
   "license": "MIT",
   "author": "Ai Chen",
   "homepage": "https://github.com/metadream",
-  "repository": "https://github.com/metadream/deno-cross.git",
+  "repository": "https://github.com/metadream/denos.git",
   "main": "mod.ts",
   "keywords": [
     "micro-server",
     "http-server",
+    "web-server",
+    "deno-server",
     "template-engine",
     "path-router",
     "restful-api",
-    "deno-server"
+    "decorators"
   ]
 }
