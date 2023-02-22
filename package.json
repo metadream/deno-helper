@@ -1,6 +1,6 @@
 {
   "name": "denos",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A compact, high-performance and full-featured web framework based on deno.",
   "license": "MIT",
   "author": "Ai Chen",
@@ -12,6 +12,8 @@
     "http-server",
     "web-server",
     "deno-server",
+    "http-framework",
+    "web-framework",
     "template-engine",
     "path-router",
     "restful-api",
