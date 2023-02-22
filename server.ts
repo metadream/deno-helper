@@ -1,47 +1,54 @@
-import { Context } from "./context.ts";
-import { Callback, HttpStatus, Method, Mime } from "./defs.ts";
 import { extname, resolve, serve } from "./deps.ts";
-import { Engine } from "./engine.ts";
+import { Callback, HttpStatus, Method, Mime } from "./defs.ts";
 import { Node, renderJsx } from "./jsx.ts";
+import { Context } from "./context.ts";
+import { Engine } from "./engine.ts";
 import { Metadata } from "./metadata.ts";
 import { Router } from "./router.ts";
 
 /**
- * HTTP Server
- * for handling requests and static resources
+ * Web Application Server
+ * to handle requests and static resources
  */
 export class Server {
 
     #router = new Router();
     #engine = new Engine();
 
-    // Create routes with shortcuts
+    // Create routes in shortcuts
     all(path: string, callback: Callback) {
         return this.#shortcut(Method.ALL)(path, callback);
     }
+
     get(path: string, callback: Callback) {
         return this.#shortcut(Method.GET)(path, callback);
     }
+
     post(path: string, callback: Callback) {
         return this.#shortcut(Method.POST)(path, callback);
     }
+
     put(path: string, callback: Callback) {
         return this.#shortcut(Method.PUT)(path, callback);
     }
+
     delete(path: string, callback: Callback) {
         return this.#shortcut(Method.DELETE)(path, callback);
     }
+
     patch(path: string, callback: Callback) {
         return this.#shortcut(Method.PATCH)(path, callback);
     }
+
     head(path: string, callback: Callback) {
         return this.#shortcut(Method.HEAD)(path, callback);
     }
+
     options(path: string, callback: Callback) {
         return this.#shortcut(Method.OPTIONS)(path, callback);
     }
 
-    // Create static resource route
+    // Create static resources route
     serve(path: string) {
         this.#router.add({
             method: Method.GET, path,
@@ -58,7 +65,7 @@ export class Server {
     }
 
     /**
-     * Create HTTP server
+     * Create web server
      * @param port default 3000
      */
     listen(port?: number) {
@@ -71,7 +78,7 @@ export class Server {
             port = port || 3000;
             serve((request: Request) => this.#handleRequest(request), { port });
             console.log(`\x1b[90m[Cross] ${this.#version()}\x1b[0m`);
-            console.log(`\x1b[90m[Cross] Repository: https://github.com/metadream/deno-cross\x1b[0m`);
+            console.log(`\x1b[90m[Cross] Repository: https://github.com/metadream/denos\x1b[0m`);
             console.log(`[Cross] Server is running at \x1b[4m\x1b[36mhttp://localhost:${port}\x1b[0m`);
         }
         return this;
@@ -171,8 +178,8 @@ export class Server {
     }
 
     /**
-     * Exports the core method for handling requests
-     * Used to undertake requests for third-party http services
+     * Exports the core method of requests handler
+     * Used to undertake requests for third-party http server
      */
     get dispatch() {
         this.#compose();
@@ -194,7 +201,7 @@ export class Server {
         }
     }
 
-    // Compose routes from metadata
+    // Compose all routes from metadata
     #compose() {
         Metadata.compose();
         Metadata.routes.forEach(route => this.#router.add(route));

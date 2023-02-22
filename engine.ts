@@ -1,37 +1,30 @@
+// deno-lint-ignore-file no-explicit-any
 import { Tmplet } from "./deps.ts";
 
-// Built-in template engine with tmplet
+/**
+ * Built-in Template Engine Based on Tmplet
+ * @link https://github.com/metadream/tmplet
+ */
 export class Engine {
 
-    /**
-     * Init engine options
-     * @param options
-     */
-    // deno-lint-ignore no-explicit-any
+    // Init engine options
     init(options: any) {
         Tmplet.init(options);
     }
 
-    /**
-     * Render template file
-     * @param file
-     * @param data
-     * @returns rendered html
-     */
-    // deno-lint-ignore no-explicit-any
-    view(file: string, data: any = {}) {
-        return Tmplet.view(file, data);
+    // Compile template text
+    compile(tmpl: string) {
+        return Tmplet.compile(tmpl);
     }
 
-    /**
-     * Render template text
-     * @param tmpl
-     * @param data
-     * @returns rendered html
-     */
-    // deno-lint-ignore no-explicit-any
+    // Render template text
     render(tmpl: string, data: any = {}) {
         return Tmplet.render(tmpl, data);
+    }
+
+    // Render template file
+    view(file: string, data: any = {}) {
+        return Tmplet.view(file, data);
     }
 
 }

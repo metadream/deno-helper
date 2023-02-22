@@ -79,6 +79,10 @@ export const Plugin = (name: string): ClassDecorator => {
     }
 }
 
+/**
+ * Route decorators
+ * @returns
+ */
 export const All = Request(Method.ALL);
 export const Get = Request(Method.GET);
 export const Post = Request(Method.POST);

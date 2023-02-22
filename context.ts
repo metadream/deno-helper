@@ -2,13 +2,14 @@ import { getCookies, setCookie, deleteCookie } from "./deps.ts";
 import { CookieOptions, HttpError } from "./defs.ts";
 
 /**
- * Application context
- * extends request and response
+ * Web Application Context
+ * extends native request and response
  */
 export class Context {
 
+    // Custom properties
     // deno-lint-ignore no-explicit-any
-    [index: string]: any; // Custom properties
+    [index: string]: any;
 
     #request: Request;
     #url: URL;
@@ -33,12 +34,12 @@ export class Context {
 
     // REQUEST PART /////////////////////////////////////////////////
 
-    // Set route parameters
+    // Set request parameters on the route path
     set params(p: Record<string, string>) {
         Object.assign(this.#params, p);
     }
 
-    // Get request parameters
+    // Get request parameters on the route path
     get params() {
         return this.#params;
     }
@@ -84,55 +85,58 @@ export class Context {
         return this.#url.pathname;
     }
 
-    // Get request method
+    // Get request method name
     get method() {
         return this.#request.method;
     }
 
-    // Get request headers. Usage: ctx.headers.get(key)
+    // Get request headers.
+    // Usage: ctx.headers.get(key)
     get headers() {
         return this.#request.headers;
     }
 
-    // Get parsing methods for request body
+    // Get parsing functions for request body
+    // Usage: await ctx.body.json()
     get body() {
         const req = this.#request;
         if (req.bodyUsed) {
-            this.throw("Body already consumed");
+            this.throw("Request body already consumed");
         }
         return {
             text: () => req.text(),
             json: () => req.json(),
-            form: () => req.formData(),
             blob: () => req.blob(),
+            form: () => req.formData(),
             buffer: () => req.arrayBuffer(),
         }
     }
 
-    // Get native request instance
+    // Get the native request instance
     get request() {
         return this.#request;
     }
 
     // RESPONSE PART ////////////////////////////////////////////////
 
-    get status() {
-        return this.#response.status || 0;
-    }
-
     set status(status: number) {
         this.#response.status = status;
     }
 
-    get statusText() {
-        return this.#response.statusText || "";
+    get status() {
+        return this.#response.status || 0;
     }
 
     set statusText(statusText: string) {
         this.#response.statusText = statusText;
     }
 
+    get statusText() {
+        return this.#response.statusText || "";
+    }
+
     // The following 5 methods are used to manipulate response headers
+    // Usage: ctx.has("content-type")
     has(name: string) {
         return this.#response.headers.has(name);
     }
@@ -153,14 +157,14 @@ export class Context {
         this.#response.headers.delete(name);
     }
 
-    // Permanent redirect codes: 301 (default), 308
+    // Permanent redirect codes: 301, 308 (default)
     // Temporary redirect codes: 302，303，307
-    redirect(url: string, status: 301 | 302 | 303 | 307 | 308 = 301) {
+    redirect(url: string, status: 301 | 302 | 303 | 307 | 308 = 308) {
         this.#response.status = status;
         this.set("Location", url);
     }
 
-    // Build the response object
+    // Build the response instance
     // BodyInit: Blob, BufferSource, FormData, ReadableStream, URLSearchParams, or USVString
     build(body: BodyInit | Response | undefined | null) {
         if (body === undefined || body === null ||
@@ -168,7 +172,7 @@ export class Context {
             return new Response(null, this.#response);
         }
 
-        // it's a complete native response
+        // It's a complete native response
         if (body instanceof Response) {
             return body.status === 204 || body.status === 304
                 ? new Response(null, body) : body;

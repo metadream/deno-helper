@@ -84,10 +84,10 @@ export const Mime: Record<string, string> = {
     ".zip": "application/zip",
 }
 
-// Route callback function of the controller
+// Route callback function in the controller
 export type Callback = (ctx: Context) => void;
 
-// Decorator type
+// Decorator entity
 export type Decorator = {
     type: "class" | "method";
     name: string;
@@ -95,7 +95,7 @@ export type Decorator = {
     fn?: string | symbol;
 }
 
-// Route type
+// Route entity
 export type Route = {
     method: string;
     path: string;
@@ -104,7 +104,7 @@ export type Route = {
     params?: Record<string, string>;
 }
 
-// Middleware type
+// Middleware entity
 export type Middleware = {
     priority: number;
     callback: Callback;
@@ -135,7 +135,7 @@ export type CookieOptions = {
 
 /**
  * Custom Http Error
- * Add HTTP status code
+ * Add HTTP status code field
  */
 export class HttpError extends Error {
     status: number;

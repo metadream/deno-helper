@@ -1,11 +1,11 @@
-# deno-cross
+# Denos
 
-A tiny and strong framework for web application based on deno and decorators.
+A compact, high-performance and full-featured web framework based on deno.
 
 ## Shortcut mode
 
 ```ts
-import { Cross } from "https://esm.sh/deno-cross/mod.ts";
+import { Cross } from "https://esm.sh/denos/mod.ts";
 
 new Cross()
   .serve("/assets/*")
@@ -28,7 +28,7 @@ decorators at startup, it is almost the same in runtime.
 
 ```ts
 // main.ts
-import { Cross } from "https://esm.sh/deno-cross/mod.ts";
+import { Cross } from "https://esm.sh/denos/mod.ts";
 import "./controllers/MyController.ts"; // Do not forget import the controllers
 
 new Cross().listen();
@@ -38,7 +38,7 @@ new Cross().listen();
 
 ```ts
 // controller.ts
-import { Context, Controller, Get } from "https://esm.sh/deno-cross/mod.ts";
+import { Context, Controller, Get } from "https://esm.sh/denos/mod.ts";
 
 @Controller("/prefix")
 export class MyController {
@@ -56,7 +56,7 @@ role of the middleware parameter is to set the execution priority.
 
 ```ts
 // middleware.ts
-import { Context, Middleware } from "https://esm.sh/deno-cross/mod.ts";
+import { Context, Middleware } from "https://esm.sh/denos/mod.ts";
 
 export class MyMiddleware {
   @Middleware(2)
@@ -77,7 +77,7 @@ bound to the context.
 
 ```ts
 // plugin.ts
-import { Plugin } from "https://esm.sh/deno-cross/mod.ts";
+import { Plugin } from "https://esm.sh/denos/mod.ts";
 
 @Plugin("redis")
 export class Redis {
@@ -119,7 +119,7 @@ import {
   Controller,
   Get,
   Template,
-} from "https://esm.sh/deno-cross/mod.ts";
+} from "https://esm.sh/denos/mod.ts";
 
 @Controller("/prefix")
 export class MyController {
@@ -139,7 +139,7 @@ export class MyController {
 ```ts
 // controller.ts
 /** @jsx h */
-import { Context, Controller, Get, h } from "https://esm.sh/deno-cross/mod.ts";
+import { Context, Controller, Get, h } from "https://esm.sh/denos/mod.ts";
 
 const Homepage = ({ props }: any) => (
   <div>
@@ -165,7 +165,7 @@ only once. This decorator has no parameters.
 
 ```ts
 // error.ts
-import { Context, ErrorHandler } from "https://esm.sh/deno-cross/mod.ts";
+import { Context, ErrorHandler } from "https://esm.sh/denos/mod.ts";
 
 export class AnyClass {
   @ErrorHandler

@@ -1,3 +1,4 @@
+// Embeddable Javascript (XML-like) Syntax Extension
 declare global {
     namespace JSX {
         // deno-lint-ignore no-explicit-any

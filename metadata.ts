@@ -2,7 +2,7 @@ import { Callback, Decorator, HttpError, Middleware, Route } from "./defs.ts";
 import { join, Reflect } from "./deps.ts";
 
 /**
- * Global reflect metadata cache for decorator constructors
+ * Global Reflect Metadata Cache for Decorator Constructors
  */
 export class Metadata {
 
