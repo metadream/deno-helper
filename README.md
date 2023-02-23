@@ -1,13 +1,13 @@
 # Denos
 
-A compact, high-performance and full-featured web framework based on deno.
+A compact, high-performance and full-featured web server framework based on deno.
 
 ## Shortcut mode
 
 ```ts
-import { Cross } from "https://esm.sh/denos/mod.ts";
+import { Denos } from "https://esm.sh/denos/mod.ts";
 
-new Cross()
+Denos
   .serve("/assets/*")
   .get("/:user", (ctx) => {
     return ctx.params.user;
@@ -28,10 +28,10 @@ decorators at startup, it is almost the same in runtime.
 
 ```ts
 // main.ts
-import { Cross } from "https://esm.sh/denos/mod.ts";
+import { Denos } from "https://esm.sh/denos/mod.ts";
 import "./controllers/MyController.ts"; // Do not forget import the controllers
 
-new Cross().listen();
+Denos.listen();
 ```
 
 ### 1. Controllers
@@ -106,25 +106,19 @@ template syntax.
 
 ```ts
 // main.ts
-new Cross()
-.engine({ // Engine options, not necessary
+Denos.engine({ // Engine options, not necessary
   root: "", // The root of template files
   imports: {} // Global imports for template
 })
 .listen();
 
 // controller.ts
-import {
-  Context,
-  Controller,
-  Get,
-  Template,
-} from "https://esm.sh/denos/mod.ts";
+import { Context, Controller, Get, Template } from "https://esm.sh/denos/mod.ts";
 
 @Controller("/prefix")
 export class MyController {
   @Get("/:user")
-  @Template("index.html") // or @Template("root/path/index.html")
+  @Template("index.html") // or @Template("root/path/index.html") if not initialize engine
   getUser(ctx: Context) {
     return { name: ctx.params.user };
   }
