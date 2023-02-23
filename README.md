@@ -8,10 +8,7 @@ A compact, high-performance and full-featured web server framework based on deno
 import { Denos } from "https://esm.sh/denos/mod.ts";
 
 Denos
-  .serve("/assets/*")
-  .get("/:user", (ctx) => {
-    return ctx.params.user;
-  })
+  .get("/:user", ctx => ctx.params.user)
   .listen();
 ```
 
@@ -173,16 +170,16 @@ export class AnyClass {
 
 ### Constructor
 
-To start the web service, you simply new an instance with
-`new Cross(...routes:Route[])`. The instance has two public methods as follow:
+To start the web server, you simply write a single line of code
+`Denos.listen()`. The instance of `Denos` has three main methods as follow:
 
-- `serve(dir)` "dir" is the relative path of static resources directory. that
-  fetched responses are allowed to be used again.
+- `serve(path)` `path` is the relative path of static resources directory. `serve` method is the syntactic sugar for `get` routing, so the `path` must starts with "/".
+- `engine(options)` Initialize the built-in template engine. The default value for `options` is `{ root: "", imports: {} }`.
 - `listen(port)` HTTP server listening port, default 3000.
 
-### Shortcuts
+### Routing
 
-The shortcut methods including
+The routing methods including
 `all`,`get`,`post`,`put`,`del`,`patch`,`head`,`opt`, and all methods have the
 same parameters.
 
@@ -191,7 +188,7 @@ same parameters.
 
 ### Decorators
 
-| name           | type            | parameters | parameter description         |
+| Name           | Type            | Parameters | Parameter description         |
 | -------------- | --------------- | ---------- | ----------------------------- |
 | @Controller    | ClassDecorator  | string     | Prefix for request route      |
 | @Plugin        | ClassDecorator  | string     | Plugin name with context      |
