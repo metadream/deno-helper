@@ -10,7 +10,7 @@ import { Router } from "./router.ts";
  * Web Application Server
  * to handle requests and static resources
  */
-export class Server {
+class Server {
 
     #router = new Router();
     #engine = new Engine();
@@ -216,3 +216,5 @@ export class Server {
     }
 
 }
+
+export const Denos = new Server();

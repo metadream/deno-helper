@@ -58,7 +58,7 @@ export class Router {
 }
 
 /**
- * Radix tree modified version (Modify the return parameters type)
+ * Radix tree modified version (the return parameters type modified)
  * @author https://github.com/zhmushan/router
  * @import https://deno.land/x/router@v2.0.1/mod.ts
  */

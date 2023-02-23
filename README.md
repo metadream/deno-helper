@@ -1,6 +1,7 @@
 # Denos
 
-A compact, high-performance and full-featured web server framework based on deno.
+A compact, high-performance and full-featured web server framework based on
+deno.
 
 ## Shortcut mode
 
@@ -8,7 +9,7 @@ A compact, high-performance and full-featured web server framework based on deno
 import { Denos } from "https://esm.sh/denos/mod.ts";
 
 Denos
-  .get("/:user", ctx => ctx.params.user)
+  .get("/:user", (ctx) => ctx.params.user)
   .listen();
 ```
 
@@ -93,11 +94,11 @@ export class Redis {
 Then you can use redis object as singleton instance in any controllers with
 `ctx.redis`.
 
-### 4. Template
+### 4. Templates
 
-Template decorator is used to decorate controller handlers, the parameters is
-template file path. and the built-in engine will be used for rendering
-automatically. The built-in engine is based on
+Template decorators are used to decorate controller methods, and its parameter
+is the template file path. After adding it the built-in template engine will be
+used for rendering automatically. The built-in engine is based on
 [tmplet](https://github.com/metadream/tmplet), You can go to the repo to see the
 template syntax.
 
@@ -115,7 +116,7 @@ import { Context, Controller, Get, Template } from "https://esm.sh/denos/mod.ts"
 @Controller("/prefix")
 export class MyController {
   @Get("/:user")
-  @Template("index.html") // or @Template("root/path/index.html") if not initialize engine
+  @Template("index.html") // or @Template("root/path/index.html") if engine not initialized
   getUser(ctx: Context) {
     return { name: ctx.params.user };
   }
@@ -173,17 +174,21 @@ export class AnyClass {
 To start the web server, you simply write a single line of code
 `Denos.listen()`. The instance of `Denos` has three main methods as follow:
 
-- `serve(path)` `path` is the relative path of static resources directory. `serve` method is the syntactic sugar for `get` routing, so the `path` must starts with "/".
-- `engine(options)` Initialize the built-in template engine. The default value for `options` is `{ root: "", imports: {} }`.
+- `serve(path)` `path` is the relative path of static resources directory.
+  `serve` method is the syntactic sugar for `get` routing, so the `path` must
+  starts with "/".
+- `engine(options)` Initialize the built-in template engine. The default value
+  of `options` is `{ root: "", imports: {} }`.
 - `listen(port)` HTTP server listening port, default 3000.
 
-### Routing
+### Routes
 
-The routing methods including
-`all`,`get`,`post`,`put`,`del`,`patch`,`head`,`opt`, and all methods have the
-same parameters.
+The route methods including `all`,`get`,`post`,`put`,`del`,`patch`,`head`,`opt`,
+and all methods have the same parameters. The internal router is based on radix
+tree, so you don't need to consider the order of route. For more usage, please
+refer to: https://github.com/zhmushan/router.
 
-- `path` Route path based on radix tree.
+- `path` Route path.
 - `callback` Request handle function.
 
 ### Decorators
@@ -211,8 +216,8 @@ contains properties and methods related to requests and responses.
 
 #### Request Properties
 
-- `ctx.params` The parameters with route path
-- `ctx.query` The parameters with query string
+- `ctx.params` The parameters on route path
+- `ctx.query` The parameters on query string
 - `ctx.url` ex. https://example.com:3000/users?page=1
 - `ctx.origin` ex. https://example.com:3000
 - `ctx.protocol` ex. https:
@@ -224,8 +229,8 @@ contains properties and methods related to requests and responses.
 - `ctx.headers` Refer to https://deno.com/deploy/docs/runtime-headers
 - `ctx.cookies` Including one method to get request cookie:
   `ctx.cookies.get(name)`
-- `ctx.body` Including five parsing methods: `text()`, `json()`, `form()`,
-  `blob()`, `buffer()`.
+- `ctx.body` Including five promised methods to parse request body: `text()`,
+  `json()`, `form()`, `blob()`, `buffer()`.
 - `ctx.request` Native request instance.
 
 #### Response Properties
@@ -239,24 +244,26 @@ contains properties and methods related to requests and responses.
 
 #### Response Methods
 
-- `ctx.has(name)`
+- `ctx.has(name)` The following 5 methods are used to manipulate response
+  headers
 - `ctx.get(name)`
 - `ctx.set(name, value)`
 - `ctx.append(name, value)`
 - `ctx.delete(name)`
-- `ctx.redirect(url[, status])`
+- `ctx.redirect(url[, status])` Redirect url with default status code 308.
 
 #### Others
 
-- `ctx.view(tmplPath, data)` You can return string directly,which will be
-  rendered by the @Template decorator.
-- `ctx.render(tmplText, data)` Usually not needed
-- `ctx.renderJsx(node)` You can return node directly, which will be rendered by
-  the framework.
+- `ctx.view(tmplFile, data)` If the controller method does not add a `@Template`
+  decorator, you can call this method to return the rendered text content.
+- `ctx.render(tmplText, data)` Render template text, usually not needed.
+- `ctx.renderJsx(node)` Render template node, usually not needed.
 - `ctx.error`
 - `ctx.throw(message[, status])`
 
 #### Return types
+
+Controller methods are allowed to return the following object types：
 
 - `BodyInit`: Blob, BufferSource, FormData, ReadableStream, URLSearchParams, or
   USVString
