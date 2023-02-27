@@ -10,7 +10,7 @@ import { Router } from "./router.ts";
  * Web Application Server
  * to handle requests and static resources
  */
-class Server {
+export class Server {
 
     #router = new Router();
     #engine = new Engine();
@@ -72,14 +72,14 @@ class Server {
         this.#compose();
 
         if (this.#router.routes.length === 0) {
-            console.error(`\x1b[31m[Denos] Error: No route found\x1b[0m`);
-            console.log(`[Denos] Please make sure you have imported the decorator module`);
+            console.error(`\x1b[31m[Core] Error: No route found\x1b[0m`);
+            console.log(`[Core] Please make sure you have imported the decorator module`);
         } else {
             port = port || 3000;
             serve((request: Request) => this.#handleRequest(request), { port });
-            console.log(`\x1b[90m[Denos] ${this.#version()}\x1b[0m`);
-            console.log(`\x1b[90m[Denos] Repository: https://github.com/metadream/denos\x1b[0m`);
-            console.log(`[Denos] Server is running at \x1b[4m\x1b[36mhttp://localhost:${port}\x1b[0m`);
+            console.log(`\x1b[90m[Core] ${this.#version()}\x1b[0m`);
+            console.log(`\x1b[90m[Core] Repository: https://github.com/metadream/deno-core\x1b[0m`);
+            console.log(`[Core] Server is running at \x1b[4m\x1b[36mhttp://localhost:${port}\x1b[0m`);
         }
         return this;
     }
@@ -121,7 +121,7 @@ class Server {
                 ctx.throw("Route not found", HttpStatus.NOT_FOUND);
             }
         } catch (e) {
-            console.error("\x1b[31m[Denos]", e, "\x1b[0m");
+            console.error("\x1b[31m[Core]", e, "\x1b[0m");
 
             if (Metadata.errorHandler) {
                 e.status = e.status || HttpStatus.INTERNAL_SERVER_ERROR;
@@ -216,5 +216,3 @@ class Server {
     }
 
 }
-
-export const Denos = new Server();

@@ -1,14 +1,13 @@
-# Denos
+# Deno-Core
 
-A compact, high-performance and full-featured web server framework based on
-deno.
+A compact, high-performance and full-featured web server framework in Deno.
 
 ## Shortcut mode
 
 ```ts
-import { Denos } from "https://esm.sh/denos/mod.ts";
+import { core } from "https://deno.land/x/core/mod.ts";
 
-Denos
+core
   .get("/:user", (ctx) => ctx.params.user)
   .listen();
 ```
@@ -26,17 +25,17 @@ decorators at startup, it is almost the same in runtime.
 
 ```ts
 // main.ts
-import { Denos } from "https://esm.sh/denos/mod.ts";
+import { core } from "https://deno.land/x/core/mod.ts";
 import "./controllers/MyController.ts"; // Do not forget import the controllers
 
-Denos.listen();
+core.listen();
 ```
 
 ### 1. Controllers
 
 ```ts
 // controller.ts
-import { Context, Controller, Get } from "https://esm.sh/denos/mod.ts";
+import { Context, Controller, Get } from "https://deno.land/x/core/mod.ts";
 
 @Controller("/prefix")
 export class MyController {
@@ -54,7 +53,7 @@ role of the middleware parameter is to set the execution priority.
 
 ```ts
 // middleware.ts
-import { Context, Middleware } from "https://esm.sh/denos/mod.ts";
+import { Context, Middleware } from "https://deno.land/x/core/mod.ts";
 
 export class MyMiddleware {
   @Middleware(2)
@@ -75,7 +74,7 @@ bound to the context.
 
 ```ts
 // plugin.ts
-import { Plugin } from "https://esm.sh/denos/mod.ts";
+import { Plugin } from "https://deno.land/x/core/mod.ts";
 
 @Plugin("redis")
 export class Redis {
@@ -104,14 +103,14 @@ template syntax.
 
 ```ts
 // main.ts
-Denos.engine({ // Engine options, not necessary
+core.engine({ // Engine options, not necessary
   root: "", // The root of template files
   imports: {} // Global imports for template
 })
 .listen();
 
 // controller.ts
-import { Context, Controller, Get, Template } from "https://esm.sh/denos/mod.ts";
+import { Context, Controller, Get, Template } from "https://deno.land/x/core/mod.ts";
 
 @Controller("/prefix")
 export class MyController {
@@ -131,7 +130,7 @@ export class MyController {
 ```ts
 // controller.ts
 /** @jsx h */
-import { Context, Controller, Get, h } from "https://esm.sh/denos/mod.ts";
+import { Context, Controller, Get, h } from "https://deno.land/x/core/mod.ts";
 
 const Homepage = ({ props }: any) => (
   <div>
@@ -157,7 +156,7 @@ only once. This decorator has no parameters.
 
 ```ts
 // error.ts
-import { Context, ErrorHandler } from "https://esm.sh/denos/mod.ts";
+import { Context, ErrorHandler } from "https://deno.land/x/core/mod.ts";
 
 export class AnyClass {
   @ErrorHandler
@@ -171,8 +170,8 @@ export class AnyClass {
 
 ### Constructor
 
-To start the web server, you simply write a single line of code
-`Denos.listen()`. The instance of `Denos` has three main methods as follow:
+To start the web server, you simply write a single line of code `core.listen()`.
+The instance of `core` has three main methods as follow:
 
 - `serve(path)` `path` is the relative path of static resources directory.
   `serve` method is the syntactic sugar for `get` routing, so the `path` must
