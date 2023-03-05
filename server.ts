@@ -144,11 +144,11 @@ export class Server {
      */
     async #handleStatic(ctx: Context) {
         // Removes the leading slash and converts relative path to absolute path
-        const file = resolve(ctx.path.replace(/^\/+/, ""));
+        let file = resolve(ctx.path.replace(/^\/+/, ""));
         try {
             const stat = await Deno.stat(file);
             if (stat.isDirectory) {
-                ctx.throw("Path is a directory", HttpStatus.NOT_ACCEPTABLE);
+                file += "/index.html";
             }
             const mime = Mime[extname(file)];
             if (mime) {
