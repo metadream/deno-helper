@@ -92,6 +92,9 @@ export class Server {
     async #handleRequest(request: Request): Promise<Response> {
         const time = Date.now();
         const ctx = new Context(request);
+        ctx.view = this.#engine.view.bind(this.#engine);
+        ctx.render = this.#engine.render.bind(this.#engine);
+        ctx.renderJsx = renderJsx;
         Object.assign(ctx, Metadata.plugins);
 
         let body = null;
@@ -100,9 +103,6 @@ export class Server {
                 || this.#router.find(Method.ALL, ctx.path);
 
             if (route) {
-                ctx.view = this.#engine.view.bind(this.#engine);
-                ctx.render = this.#engine.render.bind(this.#engine);
-                ctx.renderJsx = renderJsx;
                 ctx.params = route.params || {};
 
                 await this.#callMiddlewares(ctx);
