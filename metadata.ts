@@ -79,7 +79,7 @@ export class Metadata {
                 const callback = instance[decorator.fn].bind(instance);
 
                 // Parse error handler
-                if (decorator.name === "ErrorHandlder") {
+                if (decorator.name === "ErrorHandler") {
                     if (this.errorHandler) {
                         throw new HttpError("Duplicated error handler");
                     }

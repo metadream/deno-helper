@@ -148,7 +148,7 @@ export class JsxController {
 }
 ```
 
-### 6. ErrorHandlder
+### 6. ErrorHandler
 
 If an error handler decorator is defined, all errors within the framework will
 be handled by it. Like middleware, you can define it in any class method but
@@ -206,7 +206,7 @@ refer to: https://github.com/zhmushan/router.
 | @Options       | MethodDecorator | string     | Route path                    |
 | @Template      | MethodDecorator | string     | Template file path            |
 | @Middleware    | MethodDecorator | number     | Middleware execution priority |
-| @ErrorHandlder | MethodDecorator | undefined  |                               |
+| @ErrorHandler | MethodDecorator | undefined  |                               |
 
 ### Context
 
