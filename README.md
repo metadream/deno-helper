@@ -159,7 +159,7 @@ only once. This decorator has no parameters.
 import { Context, ErrorHandler } from "https://deno.land/x/core/mod.ts";
 
 export class AnyClass {
-  @ErrorHandler
+  @ErrorHandler()
   error(ctx: Context) {
     console.log(ctx.error);
   }
