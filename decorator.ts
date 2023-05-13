@@ -42,13 +42,13 @@ export const Template = (path: string): MethodDecorator => {
 }
 
 /**
- * ErrorHandlder decorator
+ * ErrorHandler decorator
  * @returns
  */
-export const ErrorHandlder = (): MethodDecorator => {
+export const ErrorHandler = (): MethodDecorator => {
     return (target, name) => {
         Metadata.append(target.constructor, {
-            type: "method", name: "ErrorHandlder", fn: name
+            type: "method", name: "ErrorHandler", fn: name
         });
     };
 }
