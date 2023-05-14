@@ -1,4 +1,4 @@
-import { extname, resolve, serve } from "./deps.ts";
+import { ConnInfo, extname, resolve, serve } from "./deps.ts";
 import { Callback, HttpStatus, Method, Mime } from "./defs.ts";
 import { Node, renderJsx } from "./jsx.ts";
 import { Context } from "./context.ts";
@@ -76,7 +76,7 @@ export class Server {
             console.log(`[Core] Please make sure you have imported the decorator module`);
         } else {
             port = port || 3000;
-            serve((request: Request) => this.#handleRequest(request), { port });
+            serve((request: Request, connInfo: ConnInfo) => this.#handleRequest(request, connInfo), { port });
             console.log(`\x1b[90m[Core] ${this.#version()}\x1b[0m`);
             console.log(`\x1b[90m[Core] Repository: https://github.com/metadream/deno-core\x1b[0m`);
             console.log(`[Core] Server is running at \x1b[4m\x1b[36mhttp://localhost:${port}\x1b[0m`);
@@ -89,9 +89,10 @@ export class Server {
      * @param request
      * @returns
      */
-    async #handleRequest(request: Request): Promise<Response> {
+    async #handleRequest(request: Request, connInfo: ConnInfo): Promise<Response> {
         const time = Date.now();
         const ctx = new Context(request);
+        ctx.remoteAddr = connInfo.remoteAddr;
         ctx.view = this.#engine.view.bind(this.#engine);
         ctx.render = this.#engine.render.bind(this.#engine);
         ctx.renderJsx = renderJsx;
