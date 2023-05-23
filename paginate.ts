@@ -30,7 +30,14 @@ function calcEllipsisPages(totalPages: number, pageIndex: number, around = 2) {
 * @param pageIndex 当前页码
 * @returns
 */
-export function paginate(totalRecords: number, pageSize: number, pageIndex: number) {
+export function paginate(totalRecords: number, pageSize: number, pageIndex: number | string = 1) {
+    if (typeof pageIndex === "string") {
+        if (!/^[1-9]\d*$/.test(pageIndex)) {
+            throw { status: 400, message: "Illegal page number" };
+        }
+        pageIndex = parseInt(pageIndex);
+    }
+
     const totalPages = Math.ceil(totalRecords / pageSize);
     if (pageIndex > totalPages) {
         throw { status: 400, message: "Page exceeded" };
