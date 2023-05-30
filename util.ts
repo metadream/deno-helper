@@ -68,6 +68,21 @@ export function randomBetween(a: number, b: number): number {
 }
 
 /**
+ * Generate a random string with specified length
+ * @param {Number} length
+ * @returns {String}
+ */
+export function randomString(length: number) {
+    const base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+        const index = randomBetween(0, base.length - 1);
+        result += base.charAt(index);
+    }
+    return result;
+}
+
+/**
  * Initials upper case
  * @param {String} text
  * @returns {String}
