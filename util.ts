@@ -1,4 +1,8 @@
 // deno-lint-ignore-file no-explicit-any
+// Nano ID Speed: 1000 IDs per hour, ~919 years or 8B IDs needed,
+// in order to have a 1% probability of at least one collision.
+import { customAlphabet } from "https://deno.land/x/nanoid@v3.0.0/mod.ts"
+export const nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 12);
 
 /**
  * Format date with pattern string
