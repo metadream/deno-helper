@@ -1,7 +1,9 @@
 // deno-lint-ignore-file no-explicit-any
+import * as path from "https://deno.land/std@0.196.0/path/mod.ts";
+import { customAlphabet } from "https://deno.land/x/nanoid@v3.0.0/mod.ts"
+
 // Nano ID Speed: 1000 IDs per hour, ~919 years or 8B IDs needed,
 // in order to have a 1% probability of at least one collision.
-import { customAlphabet } from "https://deno.land/x/nanoid@v3.0.0/mod.ts"
 export const nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 12);
 
 /**
@@ -195,4 +197,26 @@ export function mergeArrays(arr1: Array<any>, arr2: Array<any>, callback: Functi
         }
     });
     return merged;
+}
+
+/**
+ * Get all files in a directory recursively
+ * @param {String} dir
+ * @param {Array} filter
+ * @returns {Array}
+ */
+export async function walkDir(dir: string, filter?: string[]): Promise<string[]> {
+    const files: string[] = [];
+    for await (const entry of Deno.readDir(dir)) {
+        if (entry.isFile) {
+            const extname = path.extname(entry.name);
+            if (!filter || filter.includes(extname)) {
+                files.push(entry.name);
+            }
+        } else if (entry.isDirectory) {
+            const tempFiles = await walkDir(path.join(dir, entry.name), filter);
+            tempFiles.forEach(v => files.push(path.join(entry.name, v)));
+        }
+    }
+    return files;
 }
