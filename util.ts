@@ -174,3 +174,25 @@ export function mergeObjects(...objs: Array<any>): unknown {
     })
     return result;
 }
+
+/**
+ * Merge two arrays by the specify function.
+ * @example mergeArrays(arr1, arr2, (v1, v2) => v1.id == v2.id)
+ * @param arr1 
+ * @param arr2 
+ * @param callback 
+ * @returns 
+ */
+// deno-lint-ignore ban-types
+export function mergeArrays(arr1: Array<any>, arr2: Array<any>, callback: Function) {
+    const merged: Array<any> = [];
+    const clone = [...arr2];
+    arr1.forEach(a1 => {
+        const index = clone.findIndex(a2 => callback(a1, a2));
+        if (index > -1) {
+            const found = clone.splice(index, 1)[0];
+            merged.push(Object.assign(a1, found));
+        }
+    });
+    return merged;
+}
