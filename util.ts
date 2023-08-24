@@ -1,5 +1,4 @@
 // deno-lint-ignore-file no-explicit-any
-import * as path from "https://deno.land/std@0.196.0/path/mod.ts";
 
 /**
  * Format date with pattern string
@@ -192,34 +191,4 @@ export function mergeArrays(arr1: Array<any>, arr2: Array<any>, callback: Functi
         }
     });
     return merged;
-}
-
-/**
- * Get all files in a directory recursively
- * @param {String} dir
- * @param {Array} filter
- * @returns {Array}
- */
-export async function walkDir(dir: string, filter?: string[]) {
-    const files = [];
-    for await (const entry of Deno.readDir(dir)) {
-        if (entry.isFile) {
-            const extname = path.extname(entry.name);
-            if (!filter || filter.includes(extname)) {
-                const fullPath = path.join(dir, entry.name);
-                const file = Deno.statSync(fullPath);
-                files.push({
-                    path: fullPath,
-                    name: entry.name,
-                    size: file.size,
-                    atime: file.atime,
-                    mtime: file.mtime
-                });
-            }
-        } else if (entry.isDirectory) {
-            const subFiles = await walkDir(path.join(dir, entry.name), filter);
-            subFiles.forEach(v => files.push(v));
-        }
-    }
-    return files;
 }
