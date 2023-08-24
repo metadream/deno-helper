@@ -200,17 +200,23 @@ export function mergeArrays(arr1: Array<any>, arr2: Array<any>, callback: Functi
  * @param {Array} filter
  * @returns {Array}
  */
-export async function walkDir(dir: string, filter?: string[]): Promise<string[]> {
-    const files: string[] = [];
+export async function walkDir(dir: string, filter?: string[]) {
+    const files = [];
     for await (const entry of Deno.readDir(dir)) {
         if (entry.isFile) {
             const extname = path.extname(entry.name);
             if (!filter || filter.includes(extname)) {
-                files.push(entry.name);
+                const file = Deno.statSync(path.join(dir, entry.name));
+                files.push({
+                    name: entry.name,
+                    size: file.size,
+                    atime: file.atime,
+                    mtime: file.mtime
+                });
             }
         } else if (entry.isDirectory) {
             const tempFiles = await walkDir(path.join(dir, entry.name), filter);
-            tempFiles.forEach(v => files.push(path.join(entry.name, v)));
+            tempFiles.forEach(v => files.push(path.join(entry.name, v.name)));
         }
     }
     return files;
