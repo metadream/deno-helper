@@ -206,8 +206,10 @@ export async function walkDir(dir: string, filter?: string[]) {
         if (entry.isFile) {
             const extname = path.extname(entry.name);
             if (!filter || filter.includes(extname)) {
-                const file = Deno.statSync(path.join(dir, entry.name));
+                const fullPath = path.join(dir, entry.name);
+                const file = Deno.statSync(fullPath);
                 files.push({
+                    path: fullPath,
                     name: entry.name,
                     size: file.size,
                     atime: file.atime,
@@ -215,8 +217,8 @@ export async function walkDir(dir: string, filter?: string[]) {
                 });
             }
         } else if (entry.isDirectory) {
-            const tempFiles = await walkDir(path.join(dir, entry.name), filter);
-            tempFiles.forEach(v => files.push(path.join(entry.name, v.name)));
+            const subFiles = await walkDir(path.join(dir, entry.name), filter);
+            subFiles.forEach(v => files.push(v));
         }
     }
     return files;
