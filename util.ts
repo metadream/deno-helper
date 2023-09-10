@@ -23,7 +23,7 @@ export function formatDate(date: any, pattern: string, utc: boolean): string {
         .replace(/ss/g, ("0" + date[get + "Seconds"]()).slice(-2))
         .replace(/s/g, date[get + "Seconds"]())
         .replace(/SSS/g, ("00" + date[get + "Milliseconds"]()).slice(-3))
-        .replace(/S/g, date[get + "Milliseconds"]())
+        .replace(/S/g, date[get + "Milliseconds"]());
 }
 
 /**
@@ -34,7 +34,8 @@ export function formatDate(date: any, pattern: string, utc: boolean): string {
 export function formatBytes(bytes: number): string {
     const base = Math.floor(Math.log(bytes) / Math.log(1024));
     const unit = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "BB", "NB", "DB"][base];
-    return parseFloat((bytes / Math.pow(1024, base)).toFixed(1)) + unit;
+    const scale = Math.max(0, base - 2);
+    return parseFloat((bytes / Math.pow(1024, base)).toFixed(scale)) + unit;
 }
 
 /**
@@ -88,7 +89,7 @@ export function randomString(length: number) {
  * @returns {String}
  */
 export function firstUpperCase(text: string): string {
-    return text.toLowerCase().replace(/( |^)[a-z]/g, L => L.toUpperCase());
+    return text.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase());
 }
 
 /**
@@ -121,12 +122,12 @@ export function truncate(text: string, length: number): string {
 
     // Replace one Chinese character with two English letters
     // and then compare the length
-    if (text.replace(cnRegex, '**').length > length) {
+    if (text.replace(cnRegex, "**").length > length) {
         const m = Math.floor(length / 2);
         for (let i = m, l = text.length; i < l; i++) {
             const _text = text.substring(0, i);
-            if (_text.replace(cnRegex, '**').length >= length) {
-                return _text + '...';
+            if (_text.replace(cnRegex, "**").length >= length) {
+                return _text + "...";
             }
         }
     }
@@ -167,24 +168,24 @@ export function mergeObjects(...objs: Array<any>): unknown {
                 result[key] = value;
             }
         }
-    })
+    });
     return result;
 }
 
 /**
  * Merge two arrays by the specify function.
  * @example mergeArrays(arr1, arr2, (v1, v2) => v1.id == v2.id)
- * @param arr1 
- * @param arr2 
- * @param callback 
- * @returns 
+ * @param arr1
+ * @param arr2
+ * @param callback
+ * @returns
  */
 // deno-lint-ignore ban-types
 export function mergeArrays(arr1: Array<any>, arr2: Array<any>, callback: Function) {
     const merged: Array<any> = [];
     const clone = [...arr2];
-    arr1.forEach(a1 => {
-        const index = clone.findIndex(a2 => callback(a1, a2));
+    arr1.forEach((a1) => {
+        const index = clone.findIndex((a2) => callback(a1, a2));
         if (index > -1) {
             const found = clone.splice(index, 1)[0];
             merged.push(Object.assign(a1, found));
