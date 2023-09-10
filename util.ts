@@ -32,10 +32,10 @@ export function formatDate(date: any, pattern: string, utc: boolean): string {
  * @returns {String}
  */
 export function formatBytes(bytes: number): string {
-    const base = Math.floor(Math.log(bytes) / Math.log(1024));
-    const unit = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "BB", "NB", "DB"][base];
+    const unit = ["B", "K", "M", "G", "T", "P", "E", "Z"];
+    const base = Math.min(unit.length - 1, Math.floor(Math.log(bytes) / Math.log(1024)));
     const scale = Math.max(0, base - 2);
-    return parseFloat((bytes / Math.pow(1024, base)).toFixed(scale)) + unit;
+    return parseFloat((bytes / Math.pow(1024, base)).toFixed(scale)) + " " + unit[base];
 }
 
 /**
