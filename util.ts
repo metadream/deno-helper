@@ -69,6 +69,14 @@ export function randomBetween(a: number, b: number): number {
 }
 
 /**
+ * Shuffle the order of array elements
+ * @param {Array} array
+ */
+export function shuffle(array: Array<unknown>) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+/**
  * Generate a random string with specified length
  * @param {Number} length
  * @returns {String}
