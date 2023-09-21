@@ -24,24 +24,19 @@ function calcEllipsisPages(totalPages: number, pageIndex: number, around = 2) {
 }
 
 /**
-* 分页助手
-* @param totalRecords 总记录数
-* @param pageSize 每页记录数
-* @param pageIndex 当前页码
-* @returns
-*/
+ * 分页助手
+ * @param totalRecords 总记录数
+ * @param pageSize 每页记录数
+ * @param pageIndex 当前页码
+ * @returns
+ */
 export function paginate(totalRecords: number, pageSize: number, pageIndex: number | string = 1) {
     if (typeof pageIndex === "string") {
-        if (!/^[1-9]\d*$/.test(pageIndex)) {
-            throw { status: 400, message: "Illegal page number" };
-        }
-        pageIndex = parseInt(pageIndex);
+        pageIndex = parseInt(/^[1-9]\d*$/.test(pageIndex) ? pageIndex : "1");
     }
 
     const totalPages = Math.ceil(totalRecords / pageSize);
-    if (pageIndex > totalPages) {
-        throw { status: 400, message: "Page exceeded" };
-    }
+    if (pageIndex > totalPages) pageIndex = totalPages;
 
     const ellipsisPages = calcEllipsisPages(totalPages, pageIndex);
     const startIndex = pageSize * (pageIndex - 1); // 当前页的记录起始位置
