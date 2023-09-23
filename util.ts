@@ -7,7 +7,7 @@
  * @param {Boolean} utc
  * @returns {String}
  */
-export function formatDate(date: any, pattern: string, utc: boolean): string {
+export function formatDate(date: any, pattern: string, utc?: boolean): string {
     const get = utc ? "getUTC" : "get";
     return pattern
         .replace(/yyyy/g, date[get + "FullYear"]())
