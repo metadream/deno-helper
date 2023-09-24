@@ -58,25 +58,35 @@ export function formatString(pattern: string, args: Array<string> | Record<strin
 }
 
 /**
- * Format duration number to '00:00:00.000'
- * @param {number} s
+ * Format the duration in milliseconds
+ * @param {number} n milliseconds
+ * @param {object} options
+ *   {leading} add zeros to leading or not
+ *   {ms} show milliseconds or not
  * @returns {string}
  */
-export function formatDuration(s?: number): string {
-    const seconds = s || 0;
-    const minutes = seconds / 60;
-    const hours = minutes / 60;
+export function formatDuration(n: number, options?: { leading?: boolean; ms?: boolean }): string {
+    const ms = Math.trunc(n) % 1000;
+    const seconds = Math.trunc(n / 1000) % 60;
+    const minutes = Math.trunc(n / 60000) % 60;
+    const hours = Math.trunc(n / 3600000);
+    options = options || { leading: false, ms: false };
 
-    const hoursPadded = String(Math.floor(hours)).padStart(2, "0");
-    const minutesPadded = String(Math.floor(minutes % 60)).padStart(2, "0");
-    const secondsPadded = String(Math.floor(seconds) % 60).padStart(2, "0");
-    const msPadded = String(Math.round((seconds - Math.floor(seconds)) * 1000)).padStart(3, "0");
-
-    return `${hoursPadded}:${minutesPadded}:${secondsPadded}.${msPadded}`;
+    let result = "";
+    if (hours > 0) {
+        result = (options.leading ? hours.toString().padStart(2, "0") : hours) + ":";
+        options.leading = true;
+    }
+    result += (options.leading ? minutes.toString().padStart(2, "0") : minutes) +
+        ":" + seconds.toString().padStart(2, "0");
+    if (options.ms) {
+        result += "." + ms.toString().padStart(3, "0");
+    }
+    return result;
 }
 
 /**
- * Parse duration string to number
+ * Parse format string into milliseconds
  * @param {string} s
  * @returns {number}
  */
