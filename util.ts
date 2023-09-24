@@ -58,6 +58,43 @@ export function formatString(pattern: string, args: Array<string> | Record<strin
 }
 
 /**
+ * Format duration number to '00:00:00.000'
+ * @param {number} s
+ * @returns {string}
+ */
+export function formatDuration(s?: number): string {
+    const seconds = s || 0;
+    const minutes = seconds / 60;
+    const hours = minutes / 60;
+
+    const hoursPadded = String(Math.floor(hours)).padStart(2, "0");
+    const minutesPadded = String(Math.floor(minutes % 60)).padStart(2, "0");
+    const secondsPadded = String(Math.floor(seconds) % 60).padStart(2, "0");
+    const msPadded = String(Math.round((seconds - Math.floor(seconds)) * 1000)).padStart(3, "0");
+
+    return `${hoursPadded}:${minutesPadded}:${secondsPadded}.${msPadded}`;
+}
+
+/**
+ * Parse duration string to number
+ * @param {string} s
+ * @returns {number}
+ */
+export function parseDuration(s: string): number {
+    if (!s) return 0;
+    const m = s.trim().match(/^(\d{2}):(\d{2}):(\d{2})(\.\d{1,3})?$/);
+    if (!m) return 0;
+
+    const hours = parseInt(m[1], 10);
+    const minutes = parseInt(m[2], 10);
+    const seconds = parseInt(m[3], 10);
+    const ms = parseFloat(m[4]) || 0;
+
+    if (hours > 59 || minutes > 59 || seconds > 59) return 0;
+    return (hours * 60 + minutes) * 60 + seconds + ms;
+}
+
+/**
  * Generate a random number between [a,b]
  * @param {Number} a
  * @param {Number} b
