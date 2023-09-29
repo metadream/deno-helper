@@ -248,3 +248,15 @@ export function mergeArrays(arr1: Array<any>, arr2: Array<any>, callback: Functi
     });
     return merged;
 }
+
+/**
+ * Swap array elements by index
+ * @param arr
+ * @param index1
+ * @param index2
+ * @returns
+ */
+export function swapArray(arr: unknown[], index1: number, index2: number) {
+    arr[index1] = arr.splice(index2, 1, arr[index1])[0];
+    return arr;
+}
