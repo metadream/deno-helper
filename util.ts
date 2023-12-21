@@ -1,6 +1,19 @@
 // deno-lint-ignore-file no-explicit-any
 
 /**
+ * Nano id generator
+ * @param {number} size
+ * @returns
+ */
+export function nanoId(size = 21) {
+    return crypto.getRandomValues(new Uint8Array(size)).reduce((id, byte) => {
+        byte &= 61; // The length of alphabet is 62 (0-9a-zA-Z)
+        id += byte < 36 ? byte.toString(36) : (byte - 26).toString(36).toUpperCase();
+        return id;
+    }, "");
+}
+
+/**
  * Format date with pattern string
  * @param {Date} date
  * @param {String} pattern
