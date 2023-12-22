@@ -1,11 +1,11 @@
 // deno-lint-ignore-file no-explicit-any
 
 /**
- * Nano id generator
+ * Generate nano id without '-' and '_'
  * @param {number} size
  * @returns
  */
-export function nanoId(size = 21) {
+export function nanoId(size = 21): string {
     return crypto.getRandomValues(new Uint8Array(size)).reduce((id, byte) => {
         byte &= 61; // The length of alphabet is 62 (0-9a-zA-Z)
         id += byte < 36 ? byte.toString(36) : (byte - 26).toString(36).toUpperCase();
@@ -134,21 +134,6 @@ export function randomBetween(a: number, b: number): number {
  */
 export function shuffle(array: Array<unknown>) {
     return array.sort(() => Math.random() - 0.5);
-}
-
-/**
- * Generate a random string with specified length
- * @param {Number} length
- * @returns {String}
- */
-export function randomString(length: number) {
-    const base = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let result = "";
-    for (let i = 0; i < length; i++) {
-        const index = randomBetween(0, base.length - 1);
-        result += base.charAt(index);
-    }
-    return result;
 }
 
 /**

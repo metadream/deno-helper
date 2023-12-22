@@ -12,13 +12,6 @@ const importAesKey = async (key: string) => {
 }
 
 /**
- * Random UUID without '-'
- */
-export function uuid() {
-    return crypto.randomUUID().replace(/-/g, "");
-}
-
-/**
  * SHA-1 hash encryption
  * algorithm: SHA-1
  */

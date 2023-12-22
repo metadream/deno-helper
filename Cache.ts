@@ -1,3 +1,10 @@
+/**
+ * Lightweight Cache
+ *
+ * @example new Cache()
+ * @Author metadream
+ * @Since 2023-09-07
+ */
 export class Cache {
 
     private cache = new Map();
