@@ -35,7 +35,7 @@ export type SmbPath = {
 export class SmbClient {
 
     private smbOption: SmbOption = {
-        hostname: '', port: 445, username: '', password: ''
+        hostname: "", port: 445, username: "", password: ""
     };
 
     constructor(smbOption: SmbOption) {
@@ -46,9 +46,9 @@ export class SmbClient {
         Object.assign(this.smbOption, { username, password });
     }
 
-    readFile(path: string): Uint8Array {
+    readFile(path: string): ReadableStream<Uint8Array> {
         const smbPath: SmbPath = this.parseSmbPath(path);
-        return this.sendCommand("get \"" + smbPath.filename + "\" -", smbPath);
+        return this.getSmbStream("get \"" + smbPath.filename + "\" -", smbPath);
     }
 
     readDir(path = ""): SmbFile[] {
@@ -70,7 +70,7 @@ export class SmbClient {
 
         for (const line of stdout) {
             const arr = line.split(/\|/);
-            if (arr.length != 3 || arr[0] != 'Disk') continue;
+            if (arr.length != 3 || arr[0] != "Disk") continue;
 
             smbFiles.push({
                 type: "SHARE",
@@ -85,7 +85,7 @@ export class SmbClient {
         smbPath.dir = smbPath.dir + "/" + smbPath.filename;
         smbPath.filename = "";
 
-        const stdout = this.sendCommand("ls", smbPath);
+        const stdout = this.getSmbStdout("ls", smbPath);
         const lines = textDecoder.decode(stdout).split(/\n/);
         const smbFiles: SmbFile[] = [];
 
@@ -100,7 +100,7 @@ export class SmbClient {
 
             smbFiles.push({
                 name,
-                type: type.charAt(0) === 'D' ? "DIR" : "FILE",
+                type: type.charAt(0) === "D" ? "DIR" : "FILE",
                 size: parseInt(size),
                 ctime: new Date(ctime),
             });
@@ -116,8 +116,25 @@ export class SmbClient {
         return { share, dir, filename };
     }
 
-    private sendCommand(command: string, smbPath: SmbPath): Uint8Array {
-        const smbClient = new Deno.Command("smbclient", {
+    private getSmbStream(command: string, smbPath: SmbPath): ReadableStream<Uint8Array> {
+        const cmd = this.exeCommand(command, smbPath);
+        return cmd.spawn().stdout;
+    }
+
+    private getSmbStdout(command: string, smbPath: SmbPath): Uint8Array {
+        const cmd = this.exeCommand(command, smbPath);
+        const output = cmd.outputSync();
+
+        if (output.code !== 0) {
+            const message = output.stderr.length ? output.stderr : output.stdout;
+            throw new Error(textDecoder.decode(message));
+        }
+        return output.stdout;
+    }
+
+    private exeCommand(command: string, smbPath: SmbPath): Deno.Command {
+        return new Deno.Command("smbclient", {
+            stdout: "piped",
             args: [
                 "//" + this.smbOption.hostname + "/" + smbPath.share,
                 "-p", this.smbOption.port + "",
@@ -127,13 +144,6 @@ export class SmbClient {
                 "-c", command,
             ],
         });
-
-        const output = smbClient.outputSync();
-        if (output.code !== 0) {
-            const message = output.stderr.length ? output.stderr : output.stdout;
-            throw new Error(textDecoder.decode(message));
-        }
-        return output.stdout;
     }
 
 }
