@@ -54,8 +54,8 @@ export class MpdClient {
         const list = await this.sendCommand("lsinfo", path) as MpdMessage[];
         return list.sort((a: MpdMessage, b: MpdMessage) => {
             if (a.isDir && !b.isDir) return -1;
-            let x = a.file as string;
-            let y = b.file as string;
+            const x = a.file as string;
+            const y = b.file as string;
             return x.localeCompare(y, "zh");
         });
     }
