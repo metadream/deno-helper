@@ -21,6 +21,7 @@ export function nanoId(size = 21): string {
  * @returns {String}
  */
 export function formatDate(date: any, pattern: string, utc?: boolean): string {
+    if (!date) return "";
     const get = utc ? "getUTC" : "get";
     return pattern
         .replace(/yyyy/g, date[get + "FullYear"]())
@@ -45,6 +46,7 @@ export function formatDate(date: any, pattern: string, utc?: boolean): string {
  * @returns {String}
  */
 export function formatBytes(bytes: number): string {
+    if (!bytes) return "";
     if (bytes < 1) return "0";
     const unit = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB"];
     const base = Math.min(unit.length - 1, Math.floor(Math.log(bytes) / Math.log(1024)));
