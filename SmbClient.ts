@@ -1,3 +1,4 @@
+const DEFAULT_PORT = 445;
 const textDecoder = new TextDecoder();
 
 export type SmbOption = {
@@ -28,14 +29,14 @@ export type SmbPath = {
  * @example const smb = new SmbClient({ hostname: "10.0.0.2" });
  *          smb.authenticate("username", "password");
  *          const smbFile = smb.readDir("/");
- *          const uint8array = smb.readFile("/abc.jpg");
+ *          const readable = smb.readFile("/abc.jpg");
  * @Author metadream
  * @Since 2023-12-17
  */
 export class SmbClient {
 
     private smbOption: SmbOption = {
-        hostname: "", port: 445, username: "", password: ""
+        hostname: "", port: DEFAULT_PORT, username: "", password: ""
     };
 
     constructor(smbOption: SmbOption) {
