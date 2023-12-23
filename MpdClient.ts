@@ -3,9 +3,9 @@ import { TextLineStream } from "https://deno.land/std@0.210.0/streams/mod.ts";
 const DEFAULT_PORT = 6600;
 const textEncoder = new TextEncoder();
 
-enum MpdSignal { VERISON = "OK MPD", END = "OK", ERROR = "ACK" }
-type MpdOption = { hostname: string, port?: number };
-type MpdMessage = Record<string, string | number | boolean | Date>;
+export enum MpdSignal { VERISON = "OK MPD", END = "OK", ERROR = "ACK" }
+export type MpdOption = { hostname: string, port?: number };
+export type MpdMessage = Record<string, string | number | boolean | Date>;
 
 /**
  * Music Player Deamon Client
@@ -35,25 +35,23 @@ export class MpdClient {
     }
 
     // Get status
-    async getStatus(): Promise<MpdMessage | MpdMessage[]> {
-        return await this.sendCommand("status");
+    async getStatus(): Promise<MpdMessage> {
+        return await this.sendCommand("status") as MpdMessage;
     }
 
     // Get current song
-    async getCurrentSong(): Promise<MpdMessage | MpdMessage[]> {
-        return await this.sendCommand("currentsong");
+    async getCurrentSong(): Promise<MpdMessage> {
+        return await this.sendCommand("currentsong") as MpdMessage;
     }
 
     // Get playlist
-    async getPlaylist(): Promise<MpdMessage | MpdMessage[]> {
-        return await this.sendCommand("playlistinfo");
+    async getPlaylist(): Promise<MpdMessage[]> {
+        return await this.sendCommand("playlistinfo") as MpdMessage[];
     }
 
     // Get directories or files in library
-    async getLibrary(path: string): Promise<MpdMessage | MpdMessage[]> {
-        const list = await this.sendCommand("lsinfo", path);
-        // TODO: Collections.sort(list);
-        return list;
+    async getLibrary(path: string): Promise<MpdMessage[]> {
+        return await this.sendCommand("lsinfo", path) as MpdMessage[];
     }
 
     async playId(id: number): Promise<void> {
