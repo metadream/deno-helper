@@ -1,5 +1,5 @@
 export * from "./Cache.ts";
-export * from "./EventStream.ts";
+export * from "./EventResponse.ts";
 export * from "./SmbClient.ts";
 export * from "./crypto.ts";
 export * from "./paginate.ts";

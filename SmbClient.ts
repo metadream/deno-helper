@@ -1,5 +1,3 @@
-import { join } from "https://deno.land/std@0.200.0/path/join.ts";
-
 const textDecoder = new TextDecoder();
 
 export type SmbOption = {
@@ -17,13 +15,20 @@ export type SmbFile = {
     ctime?: Date,
 };
 
+export type SmbPath = {
+    share: string,
+    dir: string,
+    filename: string,
+}
+
 /**
  * Samba Client
  * Depends on smbclient CLI: apt install smbclient
  *
  * @example const smb = new SmbClient({ hostname: "10.0.0.2" });
- *          smb.authenticate("username", "password")
+ *          smb.authenticate("username", "password");
  *          const smbFile = smb.readDir("/");
+ *          const uint8array = smb.readFile("/abc.jpg");
  * @Author metadream
  * @Since 2023-12-17
  */
@@ -37,104 +42,98 @@ export class SmbClient {
         Object.assign(this.smbOption, smbOption);
     }
 
-    authenticate(username: string, password: string) {
+    authenticate(username: string, password: string): void {
         Object.assign(this.smbOption, { username, password });
     }
 
-    readFile(path: string) {
-        const index = path.lastIndexOf("/");
-        this.sendCommand("get " + path.substring(index + 1) + " -", path.substring(0, index));
+    readFile(path: string): Uint8Array {
+        const smbPath: SmbPath = this.parseSmbPath(path);
+        return this.sendCommand("get \"" + smbPath.filename + "\" -", smbPath);
     }
 
-    readDir(path = "/"): SmbFile[] {
-        return path === "/" ? this.listShares() : this.listFiles(path);
+    readDir(path = ""): SmbFile[] {
+        const smbPath: SmbPath = this.parseSmbPath(path);
+        return smbPath.share ? this.listFiles(smbPath) : this.listShares();
     }
 
     private listShares(): SmbFile[] {
-        const smbClient = new Deno.Command("smbclient", {
+        const cmd = new Deno.Command("smbclient", {
             args: [
-                "-L", this.smbOption.hostname,
+                "-gL", this.smbOption.hostname,
                 "-p", this.smbOption.port + "",
                 "-U", this.smbOption.username + "%" + this.smbOption.password,
             ],
         });
 
-        const stdout = textDecoder.decode(smbClient.outputSync().stdout).split(/\n+/);
+        const stdout = textDecoder.decode(cmd.outputSync().stdout).split(/\n+/);
         const smbFiles: SmbFile[] = [];
-        let start = false;
 
-        for (let line of stdout) {
-            line = line.trim();
-            if (!line) continue;
-            if (line.startsWith("---")) { start = true; continue; }
-            if (!start) continue;
-
-            const values = line.split(/\s{2,}/);
-            if (values.length != 3) continue;
-            if (values[1] != 'Disk') continue;
+        for (const line of stdout) {
+            const arr = line.split(/\|/);
+            if (arr.length != 3 || arr[0] != 'Disk') continue;
 
             smbFiles.push({
                 type: "SHARE",
-                name: values[0],
-                comment: values[2],
+                name: arr[1],
+                comment: arr[2],
             });
         }
         return smbFiles;
     }
 
-    private listFiles(path: string): SmbFile[] {
-        const smbFiles: SmbFile[] = [];
-        const stdout = this.sendCommand("ls", path);
+    private listFiles(smbPath: SmbPath): SmbFile[] {
+        smbPath.dir = smbPath.dir + "/" + smbPath.filename;
+        smbPath.filename = "";
 
-        for (let line of stdout) {
+        const stdout = this.sendCommand("ls", smbPath);
+        const lines = textDecoder.decode(stdout).split(/\n/);
+        const smbFiles: SmbFile[] = [];
+
+        for (let line of lines) {
             line = line.trim();
             if (!line) break;
 
-            const createTime = line.slice(-24);
-            line = line.slice(0, -24).trim();
-
-            const values = line.split(/\s{2,}/);
-            if (values.length != 3) continue;
-            if (values[0] === "." || values[0] === "..") continue;
+            const matches = line.match(/(?<name>.+\S)\s+(?<type>[A-Z])\s+(?<size>\d+)\s+(?<ctime>.{24})/);
+            if (!matches || !matches.groups) continue;
+            const { type, name, size, ctime } = matches.groups;
+            if (name === "..") continue;
 
             smbFiles.push({
-                type: values[1] === 'A' ? "FILE" : "DIR",
-                name: values[0],
-                size: parseInt(values[2]),
-                ctime: new Date(createTime),
+                name,
+                type: type.charAt(0) === 'D' ? "DIR" : "FILE",
+                size: parseInt(size),
+                ctime: new Date(ctime),
             });
         }
         return smbFiles;
     }
 
-    private sendCommand(command: string, path: string): string[] {
+    private parseSmbPath(path = ""): SmbPath {
+        const parts = path.replace(/^\/*|\/*$/g, "").split(/\/+/);
+        const share = parts.shift() || "";
+        const filename = parts.pop() || "";
+        const dir = parts.join("/");
+        return { share, dir, filename };
+    }
+
+    private sendCommand(command: string, smbPath: SmbPath): Uint8Array {
         const smbClient = new Deno.Command("smbclient", {
             args: [
-                "-c", command,
-                "//" + join(this.smbOption.hostname, path),
+                "//" + this.smbOption.hostname + "/" + smbPath.share,
                 "-p", this.smbOption.port + "",
                 "-U", this.smbOption.username + "%" + this.smbOption.password,
+                "-d", "0", // default debug level is 1, set to 0 get less output
+                "-D", smbPath.dir,
+                "-c", command,
             ],
         });
 
-        console.log([
-            "-c", command,
-            "//" + join(this.smbOption.hostname, path),
-            "-p", this.smbOption.port + "",
-            "-U", this.smbOption.username + "%" + this.smbOption.password,
-        ].join(" "));
-
         const output = smbClient.outputSync();
-        const stderr = textDecoder.decode(output.stderr);
-        if (stderr) {
-            throw new Error(stderr);
+        if (output.code !== 0) {
+            const message = output.stderr.length ? output.stderr : output.stdout;
+            throw new Error(textDecoder.decode(message));
         }
-
-        const stdout = textDecoder.decode(output.stdout);
-        if (stdout.startsWith("tree connect failed")) {
-            throw new Error(stdout);
-        }
-        return stdout.split(/\n/);
+        return output.stdout;
     }
 
 }

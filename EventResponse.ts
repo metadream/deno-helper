@@ -9,13 +9,13 @@ export type EventSource = {
 }
 
 /**
- * Server-Sent Event Stream
+ * Server-Sent Event Response
  *
- * @example new EventStream({ data: async () => await this.getJsonData() }).buildResponse()
+ * @example new EventResponse({ data: async () => await this.getData() })
  * @Author metadream
  * @Since 2023-12-22
  */
-export class EventStream extends ReadableStream<Uint8Array> {
+export class EventResponse extends Response {
 
     constructor(source: EventSource) {
         const { id, event, retry, data, interval } = source;
@@ -29,7 +29,7 @@ export class EventStream extends ReadableStream<Uint8Array> {
         }
 
         let timer = 0;
-        super({
+        const readable = new ReadableStream({
             start(controller) {
                 timer = setInterval(async () => {
                     controller.enqueue(textEncoder.encode(await getSource()));
@@ -39,10 +39,8 @@ export class EventStream extends ReadableStream<Uint8Array> {
                 if (timer > 0) clearInterval(timer);
             }
         });
-    }
 
-    buildResponse() {
-        return new Response(this, {
+        super(readable, {
             headers: {
                 "Content-Type": "text/event-stream",
                 "Connection": "keep-alive",
