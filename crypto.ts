@@ -1,4 +1,4 @@
-import { encode, decode } from "https://deno.land/std@0.187.0/encoding/base64.ts";
+import { encodeBase64, decodeBase64 } from "https://deno.land/std@0.210.0/encoding/base64.ts";
 
 const textEncode = (s: string) => new TextEncoder().encode(s);
 const textDecode = (u: Uint8Array) => new TextDecoder().decode(u);
@@ -33,16 +33,16 @@ export const AES = {
         const encrypted = await crypto.subtle.encrypt(
             { name: "AES-CBC", iv }, await importAesKey(key), textEncode(plaintext)
         );
-        return encode(iv) + '.' + encode(encrypted);
+        return encodeBase64(iv) + '.' + encodeBase64(encrypted);
     },
 
     async decrypt(ciphertext: string, key: string) {
         const index = ciphertext.indexOf(".");
-        const iv = decode(ciphertext.substring(0, index));
+        const iv = decodeBase64(ciphertext.substring(0, index));
         try {
             const decrypted = await crypto.subtle.decrypt(
                 { name: "AES-CBC", iv }, await importAesKey(key),
-                decode(ciphertext.substring(index + 1))
+                decodeBase64(ciphertext.substring(index + 1))
             );
             return textDecode(new Uint8Array(decrypted));
         } catch (e) {
@@ -71,13 +71,13 @@ export const RSA = {
 
     async exportPublicKey(key: CryptoKey) {
         const buffer = await crypto.subtle.exportKey("spki", key);
-        const base64 = encode((new Uint8Array(buffer)));
+        const base64 = encodeBase64((new Uint8Array(buffer)));
         return `-----BEGIN PUBLIC KEY-----\n${base64}\n-----END PUBLIC KEY-----`;
     },
 
     async exportPrivateKey(key: CryptoKey) {
         const buffer = await crypto.subtle.exportKey("pkcs8", key);
-        const base64 = encode((new Uint8Array(buffer)));
+        const base64 = encodeBase64((new Uint8Array(buffer)));
         return `-----BEGIN PRIVATE KEY-----\n${base64}\n-----END PRIVATE KEY-----`;
     },
 
@@ -87,7 +87,7 @@ export const RSA = {
         const pemContents = pem.substring(pemHeader.length, pem.length - pemFooter.length);
         return await crypto.subtle.importKey(
             "spki",
-            decode(pemContents),
+            decodeBase64(pemContents),
             { name: "RSA-OAEP", hash: "SHA-256" },
             true,
             ["encrypt"]
@@ -100,7 +100,7 @@ export const RSA = {
         const pemContents = pem.substring(pemHeader.length, pem.length - pemFooter.length);
         return await crypto.subtle.importKey(
             "pkcs8",
-            decode(pemContents),
+            decodeBase64(pemContents),
             { name: "RSA-OAEP", hash: "SHA-256" },
             true,
             ["decrypt"]
@@ -108,7 +108,7 @@ export const RSA = {
     },
 
     async encrypt(plaintext: string, publicKey: CryptoKey) {
-        return encode(await crypto.subtle.encrypt(
+        return encodeBase64(await crypto.subtle.encrypt(
             { name: "RSA-OAEP" },
             publicKey,
             textEncode(plaintext)
@@ -119,7 +119,7 @@ export const RSA = {
         return textDecode((new Uint8Array(await crypto.subtle.decrypt(
             { name: "RSA-OAEP" },
             privateKey,
-            decode(ciphertext)
+            decodeBase64(ciphertext)
         ))));
     }
 }

@@ -140,6 +140,45 @@ export function shuffle(array: Array<unknown>) {
 }
 
 /**
+ * Compare two strings
+ * @param aStr
+ * @param bStr
+ * @param locale
+ * @returns
+ */
+export function localeCompare(aStr: string, bStr: string, locale = "zh") {
+    const regExp = [
+        /[\s\~\!\@\#\$\%\^\&\*\(\)\-\_\+\=\{\}\[\]\|\<\>\,\.\?\/\\]/,
+        /[0-9]/, /[a-zA-Z]/, /./
+    ];
+
+    const length = Math.min(aStr.length, bStr.length);
+    for (let i = 0; i < length; i++) {
+        const aChar = aStr.charAt(i);
+        const bChar = bStr.charAt(i);
+        if (aChar === bChar) continue;
+
+        const aIndex = regExp.findIndex(v => v.test(aChar));
+        const bIndex = regExp.findIndex(v => v.test(bChar));
+
+        if (aIndex != bIndex) {
+            return aIndex - bIndex;
+        }
+        if (aIndex === 1) {
+            return parseInt(aChar) - parseInt(bChar);
+        }
+        if (aIndex === 2) {
+            return aChar.toLowerCase() < bChar.toLowerCase() ? -1 : 1;
+        }
+        if (aIndex === 3) {
+            return aChar.localeCompare(bChar, locale);
+        }
+        return aChar < bChar ? -1 : 1;
+    }
+    return aStr.length - bStr.length;
+}
+
+/**
  * Initials upper case
  * @param {String} text
  * @returns {String}

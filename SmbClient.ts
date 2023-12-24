@@ -1,3 +1,5 @@
+import { localeCompare } from "./util.ts";
+
 const DEFAULT_PORT = 445;
 const textDecoder = new TextDecoder();
 
@@ -106,7 +108,12 @@ export class SmbClient {
                 ctime: new Date(ctime),
             });
         }
-        return smbFiles;
+        return smbFiles.sort((a, b) => {
+            if (a.type !== b.type) {
+                return a.type > b.type ? 1 : -1;
+            }
+            return localeCompare(a.name, b.name);
+        });
     }
 
     private parseSmbPath(path = ""): SmbPath {

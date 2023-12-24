@@ -1,4 +1,5 @@
 import { TextLineStream } from "https://deno.land/std@0.210.0/streams/mod.ts";
+import { localeCompare } from "./util.ts";
 
 const DEFAULT_PORT = 6600;
 const textEncoder = new TextEncoder();
@@ -54,9 +55,7 @@ export class MpdClient {
         const list = await this.sendCommand("lsinfo", path) as MpdMessage[];
         return list.sort((a: MpdMessage, b: MpdMessage) => {
             if (a.isDir && !b.isDir) return -1;
-            const x = a.file as string;
-            const y = b.file as string;
-            return x.localeCompare(y, "zh");
+            return localeCompare(a.file as string, b.file as string);
         });
     }
 
@@ -191,7 +190,7 @@ export class MpdClient {
                 break;
             case "directory":
                 result["file"] = value;
-                result["isDir"] = true;
+                result["isDir"] = 1;
                 break;
             case "Last-Modified":
                 result["lastModified"] = new Date(value);
