@@ -5,7 +5,7 @@ export type EventSource = {
     event?: string;
     interval?: number;
     retry?: number;
-    data: () => Promise<object>;
+    data: () => object | Promise<object>;
 }
 
 /**
