@@ -1,5 +1,4 @@
 const textDecoder = new TextDecoder();
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export class OsInfo {
     platform = "";
@@ -303,13 +302,14 @@ export class SystemMonitor {
         return diskInfos;
     }
 
-    // IO stats (take the last statistic)
+    // Disk I/O stats
+    // Consecutive calls in the interval and subtract the values, that is the i/o per unit of time
     iostats(): IoInfo[] {
-        const stdout = this.exeCommand("iostat -d 1 2 -o JSON");
-        const stats = JSON.parse(stdout).sysstat.hosts[0].statistics[1].disk;
+        const stdout = this.exeCommand("iostat -d 1 1 -o JSON");
+        const disks = JSON.parse(stdout).sysstat.hosts[0].statistics.pop().disk;
         const ioInfos: IoInfo[] = [];
 
-        for (const item of stats) {
+        for (const item of disks) {
             const ioInfo = new IoInfo();
             ioInfos.push(ioInfo);
 
@@ -350,32 +350,29 @@ export class SystemMonitor {
     }
 
     // Network traffic stats.
-    async traffic(): Promise<TrafficInfo[]> {
-        const stat1 = this.netdev();
-        await delay(1000);
-        const stat2 = this.netdev();
-
+    // Consecutive calls in the interval and subtract the values, that is the traffic per unit of time
+    traffic(): TrafficInfo[] {
+        const ifstat = this.netdev();
         const trafficInfos: TrafficInfo[] = [];
         const faces = this.networkInterfaces();
 
         for (const face of faces) {
-            const ifstat1 = stat1[face.name];
-            const ifstat2 = stat2[face.name];
-
-            if (ifstat1 && ifstat2) {
+            const stat = ifstat[face.name];
+            if (stat) {
                 const trafficInfo = new TrafficInfo();
                 trafficInfos.push(trafficInfo);
 
                 trafficInfo.iface = face.name;
-                trafficInfo.rx_packets = ifstat2.rx_packets - ifstat1.rx_packets;
-                trafficInfo.tx_packets = ifstat2.tx_packets - ifstat1.tx_packets;
-                trafficInfo.rx_bytes = ifstat2.rx_bytes - ifstat1.rx_bytes;
-                trafficInfo.tx_bytes = ifstat2.tx_bytes - ifstat1.tx_bytes;
+                trafficInfo.rx_packets = stat.rx_packets;
+                trafficInfo.tx_packets = stat.tx_packets;
+                trafficInfo.rx_bytes = stat.rx_bytes;
+                trafficInfo.tx_bytes = stat.tx_bytes;
             }
         }
         return trafficInfos;
     }
 
+    // Parse file /proc/net/dev
     private netdev() {
         const stdout = this.exeCommand("cat /proc/net/dev");
         const lines = stdout.trim().split(/\n+/).slice(2);
