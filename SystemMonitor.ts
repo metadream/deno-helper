@@ -116,7 +116,7 @@ export class IpAddress {
  * - console.log('disks=', sm.disks());
  * - console.log('iostats=', sm.iostats());
  * - console.log('sockets=', sm.sockets());
- * - console.log('traffic=', (await sm.traffic()));
+ * - console.log('traffic=', sm.traffic());
  * - console.log('ipv4=', await sm.ipv4());
  *
  * @Author metadream
