@@ -9,8 +9,8 @@ export class OsInfo {
 }
 
 export class SystemInfo {
-    time = "";
-    uptime = "";
+    timestamp = 0;
+    uptime = 0;
     users = 0;
     loadavg = [0.0, 0.0, 0.0];
 }
@@ -106,6 +106,13 @@ export class IpAddress {
     internal = ["127.0.0.1"];
 }
 
+type TopInfo = {
+    systemInfo: SystemInfo,
+    taskInfo: TaskInfo,
+    cpuInfo: CpuInfo,
+    processes: ProcessInfo[]
+}
+
 /**
  * System Monitor for Linux
  *
@@ -175,7 +182,7 @@ export class SystemMonitor {
     }
 
     // Parse top command outputs.
-    top(): Record<string, SystemInfo | TaskInfo | CpuInfo | ProcessInfo[]> {
+    top(): TopInfo {
         const stdout = this.exeCommand("top -bn 1");
         const parts = stdout.split(/\n{2}/);
         const headLines = parts[0].split(/\n/);
@@ -184,10 +191,11 @@ export class SystemMonitor {
         // line 1
         // top - 08:45:34 up 21 days, 21:24,  1 user,  load average: 0.05, 0.02, 0.00
         const systemInfo = new SystemInfo();
+        systemInfo.timestamp = Date.now();
+        systemInfo.uptime = Deno.osUptime();
+
         const matched = headLines.shift()?.match(/^top - ([\d\:]{8}) up ([\w\s\:,]+),\s+(\d+) users?,\s+load average: ([\d\.]+, [\d\.]+, [\d\.]+)$/);
         if (matched) {
-            systemInfo.time = matched[1];
-            systemInfo.uptime = matched[2].replace(/\s+/g, " ");
             systemInfo.users = parseInt(matched[3]);
             systemInfo.loadavg = matched[4].split(/, /).map(v => parseFloat(v));
         }
