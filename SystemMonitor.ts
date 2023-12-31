@@ -61,7 +61,7 @@ export class ProcessInfo {
     command = "";
 }
 
-export class DiskInfo {
+export class FsInfo {
     filesystem = "";
     fstype = "";
     blocks = 0;
@@ -287,32 +287,32 @@ export class SystemMonitor {
     }
 
     // File sytem stats (excludes tmpfs).
-    disks(): DiskInfo[] {
+    fs(): FsInfo[] {
         const stdout = this.exeCommand("df -T -x tmpfs -x devtmpfs");
         const lines = stdout.split(/\n+/).slice(1);
-        const diskInfos: DiskInfo[] = [];
+        const fsInfos: FsInfo[] = [];
 
         for (const line of lines) {
             const matched = line.match(/^([\w\/\-\_\.]+)\s+(\w+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)%\s+([\w\/]+)$/);
             if (!matched) continue;
 
-            const diskInfo = new DiskInfo();
-            diskInfos.push(diskInfo);
-            diskInfo.filesystem = matched[1];
-            diskInfo.fstype = matched[2];
-            diskInfo.blocks = parseInt(matched[3]);
-            diskInfo.used = parseInt(matched[4]);
-            diskInfo.available = parseInt(matched[5]);
-            diskInfo.usage = parseFloat(matched[6]);
-            diskInfo.mounted = matched[7];
-            diskInfo.total = diskInfo.used + diskInfo.available;
+            const fsInfo = new FsInfo();
+            fsInfos.push(fsInfo);
+            fsInfo.filesystem = matched[1];
+            fsInfo.fstype = matched[2];
+            fsInfo.blocks = parseInt(matched[3]);
+            fsInfo.used = parseInt(matched[4]);
+            fsInfo.available = parseInt(matched[5]);
+            fsInfo.usage = parseFloat(matched[6]);
+            fsInfo.mounted = matched[7];
+            fsInfo.total = fsInfo.used + fsInfo.available;
         }
-        return diskInfos;
+        return fsInfos;
     }
 
     // Disk I/O stats
     // Consecutive calls in the interval and subtract the values, that is the i/o per unit of time
-    iostats(): IoInfo[] {
+    io(): IoInfo[] {
         const stdout = this.exeCommand("iostat -d 1 1 -o JSON");
         const disks = JSON.parse(stdout).sysstat.hosts[0].statistics.pop().disk;
         const ioInfos: IoInfo[] = [];
