@@ -102,6 +102,20 @@ export function formatDuration(n: number, options?: { leading?: boolean; ms?: bo
 }
 
 /**
+ * Format seconds to d h m s
+ * @param seconds
+ * @returns
+ */
+export function formatSeconds(seconds: number): string {
+    const d = Math.floor(seconds / 86400);
+    const h = Math.floor((seconds % 86400) / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return ((d > 0 ? d + "d " : "") + (h > 0 ? h + "h " : "") + (m > 0 ? m + "m " : "")
+        + (s > 0 ? s + "s" : "")).trim();
+}
+
+/**
  * Parse format string into milliseconds
  * @param {string} s
  * @returns {number}
