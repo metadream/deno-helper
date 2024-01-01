@@ -114,7 +114,7 @@ type TopInfo = {
 }
 
 /**
- * System Monitor for Linux
+ * Operatiing System Monitor for Linux
  *
  * @example
  * - console.log('os=', sm.os());
@@ -129,7 +129,7 @@ type TopInfo = {
  * @Author metadream
  * @Since 2023-12-22
  */
-export class SystemMonitor {
+export class OsMonitor {
 
     // Get os info.
     os(): OsInfo {
